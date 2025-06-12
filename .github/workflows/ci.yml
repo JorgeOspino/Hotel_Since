@@ -1,0 +1,34 @@
+# Nombre del pipeline
+name: Verificar Código PHP
+
+# Se ejecuta en cada push o pull request a la rama "main"
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+# Define los trabajos a ejecutar
+jobs:
+  # El nombre de nuestro trabajo es "syntax-check"
+  syntax-check:
+    # Se ejecutará en un servidor virtual con Ubuntu
+    runs-on: ubuntu-latest
+
+    # Pasos que seguirá el trabajo
+    steps:
+      # 1. Clona tu repositorio para tener acceso al código
+      - name: Clonar el repositorio
+        uses: actions/checkout@v3
+
+      # 2. Configura el entorno de PHP
+      - name: Configurar PHP 8.1
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+
+      # 3. El paso más importante: Revisar la sintaxis de todos los archivos PHP
+      # Este comando busca todos los archivos .php y los revisa uno por uno.
+      # Si encuentra un error de sintaxis (un ; que falta, etc.), el pipeline fallará.
+      - name: Revisar sintaxis del código PHP
+        run: find . -type f -name "*.php" -exec php -l {} \;
